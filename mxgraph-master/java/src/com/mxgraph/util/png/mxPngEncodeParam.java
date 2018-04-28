@@ -52,6 +52,7 @@ import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -322,6 +323,13 @@ public abstract class mxPngEncodeParam
 			}
 			return alpha;
 		}
+
+		public void writeTRNS(ChunkStream cs, mxPngImageEncoder mxPngImageEncoder) throws IOException {
+			byte[] t = this.getPaletteTransparency();
+			for (int i = 0; i < t.length; i++) {
+				cs.writeByte(t[i]);
+			}
+		}
 	}
 
 	public static class Gray extends mxPngEncodeParam
@@ -507,6 +515,11 @@ public abstract class mxPngEncodeParam
 		{
 			return bitDepthSet;
 		}
+
+		public void writeTRNS(ChunkStream cs, mxPngImageEncoder mxPngImageEncoder) throws IOException {
+			int t = this.getTransparentGray();
+			cs.writeShort(t);
+		}
 	}
 
 	public static class RGB extends mxPngEncodeParam
@@ -622,6 +635,13 @@ public abstract class mxPngEncodeParam
 				throw new IllegalStateException("PNGEncodeParam10");
 			}
 			return (transparency.clone());
+		}
+
+		public void writeTRNS(ChunkStream cs, mxPngImageEncoder mxPngImageEncoder) throws IOException {
+			int[] t = this.getTransparentRGB();
+			cs.writeShort(t[0]);
+			cs.writeShort(t[1]);
+			cs.writeShort(t[2]);
 		}
 	}
 
@@ -1695,4 +1715,6 @@ public abstract class mxPngEncodeParam
 
 		return filterType;
 	}
+
+	public abstract void writeTRNS(ChunkStream cs, mxPngImageEncoder mxPngImageEncoder) throws IOException;
 }

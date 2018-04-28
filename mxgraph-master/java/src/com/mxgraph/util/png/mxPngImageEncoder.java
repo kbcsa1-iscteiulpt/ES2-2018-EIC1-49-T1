@@ -811,27 +811,7 @@ public class mxPngImageEncoder
 		{
 			ChunkStream cs = new ChunkStream("tRNS");
 
-			if (param instanceof mxPngEncodeParam.Palette)
-			{
-				byte[] t = ((mxPngEncodeParam.Palette) param)
-						.getPaletteTransparency();
-				for (int i = 0; i < t.length; i++)
-				{
-					cs.writeByte(t[i]);
-				}
-			}
-			else if (param instanceof mxPngEncodeParam.Gray)
-			{
-				int t = ((mxPngEncodeParam.Gray) param).getTransparentGray();
-				cs.writeShort(t);
-			}
-			else if (param instanceof mxPngEncodeParam.RGB)
-			{
-				int[] t = ((mxPngEncodeParam.RGB) param).getTransparentRGB();
-				cs.writeShort(t[0]);
-				cs.writeShort(t[1]);
-				cs.writeShort(t[2]);
-			}
+			param.writeTRNS(cs, this);
 
 			cs.writeToStream(dataOutput);
 			cs.close();
