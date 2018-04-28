@@ -267,28 +267,9 @@ public class mxCellStatePreview
 
 			if (orig != null && orig != state)
 			{
-				restoreState(orig, state);
+				orig.restoreState(state);
 			}
 		}
-	}
-
-	/**
-	 * 
-	 */
-	public void restoreState(mxCellState state, mxCellState from)
-	{
-		state.setLabelBounds(from.getLabelBounds());
-		state.setAbsolutePoints(from.getAbsolutePoints());
-		state.setOrigin(from.getOrigin());
-		state.setAbsoluteOffset(from.getAbsoluteOffset());
-		state.setBoundingBox(from.getBoundingBox());
-		state.setTerminalDistance(from.getTerminalDistance());
-		state.setSegments(from.getSegments());
-		state.setLength(from.getLength());
-		state.setX(from.getX());
-		state.setY(from.getY());
-		state.setWidth(from.getWidth());
-		state.setHeight(from.getHeight());
 	}
 
 	/**

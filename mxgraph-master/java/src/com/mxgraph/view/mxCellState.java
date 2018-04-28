@@ -590,4 +590,66 @@ public class mxCellState extends mxRectangle
 		return builder.toString();
 	}
 
+	/**
+	 */
+	public void restoreState(mxCellState from) {
+		setLabelBounds(from.getLabelBounds());
+		setAbsolutePoints(from.getAbsolutePoints());
+		setOrigin(from.getOrigin());
+		setAbsoluteOffset(from.getAbsoluteOffset());
+		setBoundingBox(from.getBoundingBox());
+		setTerminalDistance(from.getTerminalDistance());
+		setSegments(from.getSegments());
+		setLength(from.getLength());
+		setX(from.getX());
+		setY(from.getY());
+		setWidth(from.getWidth());
+		setHeight(from.getHeight());
+	}
+
+	/**
+	 * Updates the given state using the bounding box of the absolute points. Also updates terminal distance, length and segments.
+	 */
+	public void updateEdgeBounds() {
+		List<mxPoint> points = getAbsolutePoints();
+		mxPoint p0 = points.get(0);
+		mxPoint pe = points.get(points.size() - 1);
+		if (p0.getX() != pe.getX() || p0.getY() != pe.getY()) {
+			double dx = pe.getX() - p0.getX();
+			double dy = pe.getY() - p0.getY();
+			setTerminalDistance(Math.sqrt(dx * dx + dy * dy));
+		} else {
+			setTerminalDistance(0);
+		}
+		double length = 0;
+		double[] segments = new double[points.size() - 1];
+		mxPoint pt = p0;
+		double minX = pt.getX();
+		double minY = pt.getY();
+		double maxX = minX;
+		double maxY = minY;
+		for (int i = 1; i < points.size(); i++) {
+			mxPoint tmp = points.get(i);
+			if (tmp != null) {
+				double dx = pt.getX() - tmp.getX();
+				double dy = pt.getY() - tmp.getY();
+				double segment = Math.sqrt(dx * dx + dy * dy);
+				segments[i - 1] = segment;
+				length += segment;
+				pt = tmp;
+				minX = Math.min(pt.getX(), minX);
+				minY = Math.min(pt.getY(), minY);
+				maxX = Math.max(pt.getX(), maxX);
+				maxY = Math.max(pt.getY(), maxY);
+			}
+		}
+		setLength(length);
+		setSegments(segments);
+		double markerSize = 1;
+		setX(minX);
+		setY(minY);
+		setWidth(Math.max(markerSize, maxX - minX));
+		setHeight(Math.max(markerSize, maxY - minY));
+	}
+
 }
